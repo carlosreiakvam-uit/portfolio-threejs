@@ -20,7 +20,6 @@ gui
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
-
 const scene = new THREE.Scene()
 
 
@@ -38,7 +37,7 @@ const mesh1 = new THREE.Mesh(
 );
 
 
-scene.add(mesh1)
+// scene.add(mesh1)
 
 
 // LIGHT
@@ -86,7 +85,6 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 let scrollY = 0
-
 addEventListener('wheel', (event) => {
     // console.log(event)
     scrollY = event.deltaY < 0 ? Math.max(scrollY - 1, 0) : scrollY + 1;
