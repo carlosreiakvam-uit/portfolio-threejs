@@ -17,55 +17,28 @@ gui
     .onChange(() => {
         material.color.set(parameters.materialColor)
     })
-/**
- * Base
- */
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
-// Scene
 const scene = new THREE.Scene()
 
-// Texture
-const textureLoader = new THREE.TextureLoader()
-const gradientTexture = textureLoader.load('textures/gradients/3.jpg')
-gradientTexture.magFilter = THREE.NearestFilter
 
 /**
  * Objects
  */
 
-const objectsDistance = 4
-
-const material = new THREE.MeshToonMaterial({
-    color: parameters.materialColor,
-    gradientMap: gradientTexture
+const material = new THREE.MeshBasicMaterial({
+    color: '#ff00ff'
 });
 
 const mesh1 = new THREE.Mesh(
-    new THREE.TorusGeometry(1, 0.4, 16, 60),
-    material
-);
-const mesh2 = new THREE.Mesh(
-    new THREE.ConeGeometry(1, 2, 32, 60),
-    material
-);
-const mesh3 = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(.8, .32, 100, 16),
+    new THREE.BoxGeometry(1, 1, 1, 10),
     material
 );
 
-mesh1.position.y = -objectsDistance * 0
-mesh2.position.y = -objectsDistance * 1
-mesh3.position.y = -objectsDistance * 2
 
-mesh1.position.x = 2
-mesh2.position.x = -2
-mesh3.position.x = 2
-
-const sectionMeshes = [mesh1, mesh2, mesh3]
-
-scene.add(mesh1, mesh2, mesh3)
+scene.add(mesh1)
 
 
 // LIGHT
@@ -98,7 +71,6 @@ window.addEventListener('resize', () => {
 /**
  * Camera
  */
-// Base camera
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 6
 scene.add(camera)
@@ -113,16 +85,14 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-/**
- * Scroll
- */
-let scrollY = window.scrollY
+let scrollY = 0
 
-window.addEventListener('scroll', () => {
-    scrollY = window.scrollY
+addEventListener('wheel', (event) => {
+    // console.log(event)
+    scrollY = event.deltaY < 0 ? Math.max(scrollY - 1, 0) : scrollY + 1;
+    document.getElementById('scrollCount').innerText = scrollY;
+});
 
-    console.log(scrollY)
-})
 
 /**
  * Animate
@@ -133,13 +103,13 @@ const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
     // Animate meshes
-    for (const mesh of sectionMeshes) {
-        mesh.rotation.x = elapsedTime * 0.1
-        mesh.rotation.y = elapsedTime * 0.12
-    }
+    // for (const mesh of sectionMeshes) {
+    //     mesh.rotation.x = elapsedTime * 0.1
+    //     mesh.rotation.y = elapsedTime * 0.12
+    // }
 
     // Animate camera
-    camera.position.y = -scrollY / sizes.height * objectsDistance
+    // camera.position.y = -scrollY / sizes.height * objectsDistance
 
     // Render
     renderer.render(scene, camera)
