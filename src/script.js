@@ -58,7 +58,7 @@ function handleStart(e) {
 
 
 const material = new THREE.MeshStandardMaterial({
-    color: '#aa00ff'
+    color: '#ffffaf'
 });
 const material2 = new THREE.MeshStandardMaterial({
     color: '#000ff0'
@@ -82,12 +82,6 @@ scene.add(player, plane)
 const joystick = document.querySelector(".joystick");
 const joystickInner = document.querySelector(".joystickInner");
 
-
-const defaultLeft = joystick.offsetLeft;
-const defaultTop = joystick.offsetTop;
-
-console.log(`The default position of the joystick is (${defaultLeft}, ${defaultTop}).`);
-
 let startX = 0;
 let movePlayerX = 0;
 let movePlayerZ = 0;
@@ -100,8 +94,7 @@ joystick.addEventListener("touchmove", (e) => {
     const x = touch.clientX;
     const y = touch.clientY;
 
-    // if move is right from center
-    // move right
+   // move right
     if (x < startX - 2) {
         console.log('move left')
         movePlayerX = -1;
@@ -109,32 +102,8 @@ joystick.addEventListener("touchmove", (e) => {
         console.log('move right')
         movePlayerX = 1;
     }
+    e.preventDefault()
 
-    // if move is left from center
-    // move left
-
-
-    //
-    //
-    // if (x > prevX) {
-    //     movePlayerX = 1;
-    //     console.log("move right")
-    // } else if (x < prevX) {
-    //     movePlayerX = -1;
-    //     console.log("move left")
-    // }
-    //
-    // if (y > prevY) {
-    //     movePlayerZ = 1;
-    //     console.log("move down")
-    //
-    // } else if (y < prevY) {
-    //     movePlayerZ = -1;
-    //     console.log("move up")
-    // }
-    //
-    // prevX = x;
-    // prevY = y;
 });
 
 joystick.addEventListener("touchstart", (e) => {
