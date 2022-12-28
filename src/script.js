@@ -80,39 +80,45 @@ scene.add(player, plane)
 
 // BUTTON INPUT
 const joystick = document.querySelector(".joystick");
-const joystickInner = document.querySelector(".joystickInner");
 
 let startX = 0;
+let lastX = 0;
 let movePlayerX = 0;
 let movePlayerZ = 0;
 
-// leftButton.addEventListener("touchstart", () => {
-//     mesh1.position.x -= 0.1;
-// });
 joystick.addEventListener("touchmove", (e) => {
     const touch = e.touches[0];
     const x = touch.clientX;
     const y = touch.clientY;
 
-   // move right
-    if (x < startX - 2) {
+    let dx = x - lastX;
+    console.log(dx)
+
+    if (dx < 0) {
         console.log('move left')
         movePlayerX = -1;
-    } else if (x > startX + 2) {
+    } else if (dx > 0) {
         console.log('move right')
         movePlayerX = 1;
     }
-    e.preventDefault()
+    lastX = x;
 
+    e.preventDefault()
 });
 
 joystick.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX
+    joystick.style.background = '#0000aa'
+    console.log('startX: ', startX)
+    console.log('touches: ', e.touches[0])
+
 
 })
 joystick.addEventListener("touchend", (e) => {
     movePlayerX = 0;
     movePlayerZ = 0;
+    joystick.style.background = '#222222'
+
 })
 
 joystick.addEventListener("touchcancel", (e) => {
@@ -169,30 +175,33 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-let scrollY = 0
-addEventListener('wheel', (event) => {
-    // console.log(event)
-    scrollY = event.deltaY < 0 ? Math.max(scrollY - 1, 0) : scrollY + 1;
-    document.getElementById('scrollCount').innerText = scrollY;
-});
+// let scrollY = 0
+// addEventListener('wheel', (event) => {
+//     // console.log(event)
+//     scrollY = event.deltaY < 0 ? Math.max(scrollY - 1, 0) : scrollY + 1;
+//     document.getElementById('scrollCount').innerText = scrollY;
+// });
 
 
 /**
  * Animate
  */
+const outerEdge = 3;
 const clock = new THREE.Clock()
-const scaleMovement = 0.05;
+const scaleMovement = 0.3;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
+
 
     player.position.x += movePlayerX * scaleMovement;
     player.position.z += movePlayerZ * scaleMovement;
 
-    // Animate meshes
-    // for (const mesh of sectionMeshes) {
-    //     mesh.rotation.x = elapsedTime * 0.1
-    //     mesh.rotation.y = elapsedTime * 0.12
-    // }
+    if (player.position.x > outerEdge) {
+        player.position.x = outerEdge;
+    } else if (player.position.x < -outerEdge) {
+        player.position.x = -outerEdge;
+    }
+
 
     // Animate camera
     // camera.position.y = -scrollY / sizes.height * objectsDistance
