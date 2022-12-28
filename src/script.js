@@ -5,44 +5,157 @@ import * as dat from 'lil-gui'
 /**
  * Debug
  */
-const gui = new dat.GUI()
+// const gui = new dat.GUI()
 
 const parameters = {
     materialColor: '#ffeded'
 }
 
 
-gui
-    .addColor(parameters, 'materialColor')
-    .onChange(() => {
-        material.color.set(parameters.materialColor)
-    })
+// gui
+//     .addColor(parameters, 'materialColor')
+//     .onChange(() => {
+//         material.color.set(parameters.materialColor)
+//     })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
+
+function fitCanvasToScreen() {
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+}
+
+window.addEventListener("resize", fitCanvasToScreen);
+fitCanvasToScreen();
+
+// Handle touch
+
+function handleStart(e) {
+    if (e.touches) {
+        const x = (e.touches[0].clientX / canvas.clientWidth) * 2 - 1;
+        const y = -(e.touches[0].clientY / canvas.clientHeight) * 2 + 1;
+        // RAYCASTER
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            console.log(`Touch intersected with object: ${object.name}`);
+        }
+
+        e.preventDefault();
+    }
+}
+
+// canvas.addEventListener("touchstart", handleStart);
 
 
 /**
  * Objects
  */
 
-const material = new THREE.MeshBasicMaterial({
-    color: '#ff00ff'
+
+const material = new THREE.MeshStandardMaterial({
+    color: '#aa00ff'
+});
+const material2 = new THREE.MeshStandardMaterial({
+    color: '#000ff0'
 });
 
-const mesh1 = new THREE.Mesh(
+
+const player = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 1, 10),
-    material
+    material,
 );
+player.name = "boksen"
+player.position.y = 0.5;
+
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 5), material2)
+plane.name = "plane"
+plane.rotateX(-Math.PI / 2)
+
+scene.add(player, plane)
+
+// BUTTON INPUT
+const joystick = document.querySelector(".joystick");
+const joystickInner = document.querySelector(".joystickInner");
 
 
-// scene.add(mesh1)
+const defaultLeft = joystick.offsetLeft;
+const defaultTop = joystick.offsetTop;
+
+console.log(`The default position of the joystick is (${defaultLeft}, ${defaultTop}).`);
+
+let startX = 0;
+let movePlayerX = 0;
+let movePlayerZ = 0;
+
+// leftButton.addEventListener("touchstart", () => {
+//     mesh1.position.x -= 0.1;
+// });
+joystick.addEventListener("touchmove", (e) => {
+    const touch = e.touches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+
+    // if move is right from center
+    // move right
+    if (x < startX - 10) {
+        console.log('move left')
+        movePlayerX = -1;
+    } else if (x > startX + 10) {
+        console.log('move right')
+        movePlayerX = 1;
+    }
+
+    // if move is left from center
+    // move left
+
+
+    //
+    //
+    // if (x > prevX) {
+    //     movePlayerX = 1;
+    //     console.log("move right")
+    // } else if (x < prevX) {
+    //     movePlayerX = -1;
+    //     console.log("move left")
+    // }
+    //
+    // if (y > prevY) {
+    //     movePlayerZ = 1;
+    //     console.log("move down")
+    //
+    // } else if (y < prevY) {
+    //     movePlayerZ = -1;
+    //     console.log("move up")
+    // }
+    //
+    // prevX = x;
+    // prevY = y;
+});
+
+joystick.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX
+
+})
+joystick.addEventListener("touchend", (e) => {
+    movePlayerX = 0;
+    movePlayerZ = 0;
+})
+
+joystick.addEventListener("touchcancel", (e) => {
+    movePlayerX = 0;
+    movePlayerZ = 0;
+})
 
 
 // LIGHT
 const light = new THREE.DirectionalLight('#ffffff');
-light.position.set(1, 1, 0);
+light.position.set(4, 5, 10);
+light.lookAt(0, 0, 0)
 scene.add(light)
 
 /**
@@ -71,7 +184,10 @@ window.addEventListener('resize', () => {
  * Camera
  */
 const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
-camera.position.z = 6
+camera.position.z = 25
+camera.position.x = 1
+camera.position.y = 10
+camera.lookAt(0, 0, 0)
 scene.add(camera)
 
 /**
@@ -96,9 +212,12 @@ addEventListener('wheel', (event) => {
  * Animate
  */
 const clock = new THREE.Clock()
-
+const scaleMovement = 0.05;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
+
+    player.position.x += movePlayerX * scaleMovement;
+    player.position.z += movePlayerZ * scaleMovement;
 
     // Animate meshes
     // for (const mesh of sectionMeshes) {
