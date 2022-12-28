@@ -102,10 +102,10 @@ joystick.addEventListener("touchmove", (e) => {
 
     // if move is right from center
     // move right
-    if (x < startX - 10) {
+    if (x < startX - 2) {
         console.log('move left')
         movePlayerX = -1;
-    } else if (x > startX + 10) {
+    } else if (x > startX + 2) {
         console.log('move right')
         movePlayerX = 1;
     }
