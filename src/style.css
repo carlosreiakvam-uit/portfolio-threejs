@@ -3,6 +3,46 @@
     padding: 0;
 }
 
+
+.circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #eee;
+    overflow: hidden;
+}
+
+.circle .half {
+    width: 50%;
+    height: 100%;
+    background-color: #f00;
+}
+
+.circle .half:nth-child(2) {
+    width: 50%;
+    height: 100%;
+    background-color: #ff0;
+}
+
+
+/*.circle div:nth-child(3){*/
+/*    background-color:yellow;*/
+/*    border-radius:0 0 0 50px;*/
+/*}*/
+/*.circle div:nth-child(4){*/
+/*    background-color:teal;*/
+/*    border-radius:0 0 50px 0;*/
+/*}*/
+
+/*.circle::before {*/
+/*    background-color: #f00;*/
+/*}*/
+
+/*.circle::after {*/
+/*    background-color: #aa0;*/
+/*    transform: rotate(90deg);*/
+/*}*/
+
 .joystick {
     position: absolute;
     bottom: 0;

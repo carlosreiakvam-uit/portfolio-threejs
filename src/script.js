@@ -1,95 +1,54 @@
 import './style.css'
 import * as THREE from 'three'
-import * as dat from 'lil-gui'
+import {createObjects} from './createObjects';
+import {createLights} from "./createLights";
+import {resize} from "./resize";
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 
-/**
- * Debug
- */
-// const gui = new dat.GUI()
+const joystick = document.querySelector(".joystick");
 
-const parameters = {
-    materialColor: '#ffeded'
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
+console.log(isMobileDevice() ? "It's a mobile device!" : "It's not a mobile device!");
+joystick.style.display = isMobileDevice() ? 'block' : 'none';
 
-// gui
-//     .addColor(parameters, 'materialColor')
-//     .onChange(() => {
-//         material.color.set(parameters.materialColor)
-//     })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
-
-function fitCanvasToScreen() {
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
 }
 
-window.addEventListener("resize", fitCanvasToScreen);
-fitCanvasToScreen();
-
-// Handle touch
-
-function handleStart(e) {
-    if (e.touches) {
-        const x = (e.touches[0].clientX / canvas.clientWidth) * 2 - 1;
-        const y = -(e.touches[0].clientY / canvas.clientHeight) * 2 + 1;
-        // RAYCASTER
-        const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-        const intersects = raycaster.intersectObjects(scene.children);
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            console.log(`Touch intersected with object: ${object.name}`);
-        }
-
-        e.preventDefault();
-    }
-}
-
-// canvas.addEventListener("touchstart", handleStart);
-
-
-/**
- * Objects
- */
-
-
-const material = new THREE.MeshStandardMaterial({
-    color: '#ffffaf'
-});
-const material2 = new THREE.MeshStandardMaterial({
-    color: '#000ff0'
-});
-
-
-const player = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1, 10),
-    material,
-);
-player.name = "boksen"
-player.position.y = 0.5;
-
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 5), material2)
-plane.name = "plane"
-plane.rotateX(-Math.PI / 2)
-
-scene.add(player, plane)
+// Add Objects
+const {plane1, welcomePlane, infoPlane1, player} = createObjects();
+// const axesHelper = new THREE.AxesHelper(10);
+scene.add(player, welcomePlane, infoPlane1, plane1)
 
 // BUTTON INPUT
-const joystick = document.querySelector(".joystick");
+let movePlayerX = 0;
 
+// LIGHT
+let light = createLights()
+scene.add(light)
+
+// Camera
+const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
+// camera.position.set(0, 0, 20)
+scene.add(camera)
+
+
+// Handle touch input
 let startX = 0;
 let lastX = 0;
-let movePlayerX = 0;
 let movePlayerZ = 0;
 
 joystick.addEventListener("touchmove", (e) => {
     const touch = e.touches[0];
     const x = touch.clientX;
-    const y = touch.clientY;
 
     let dx = x - lastX;
     console.log(dx)
@@ -126,85 +85,35 @@ joystick.addEventListener("touchcancel", (e) => {
     movePlayerZ = 0;
 })
 
+// // Handle resize
+resize(sizes, camera, canvas);
 
-// LIGHT
-const light = new THREE.DirectionalLight('#ffffff');
-light.position.set(4, 5, 10);
-light.lookAt(0, 0, 0)
-scene.add(light)
+// Controller
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
 
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
-
-window.addEventListener('resize', () => {
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
-
-/**
- * Camera
- */
-const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100)
-camera.position.z = 25
-camera.position.x = 1
-camera.position.y = 10
-camera.lookAt(0, 0, 0)
-scene.add(camera)
-
-/**
- * Renderer
- */
+// Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     alpha: true
 })
 renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// let scrollY = 0
-// addEventListener('wheel', (event) => {
-//     // console.log(event)
-//     scrollY = event.deltaY < 0 ? Math.max(scrollY - 1, 0) : scrollY + 1;
-//     document.getElementById('scrollCount').innerText = scrollY;
-// });
-
-
-/**
- * Animate
- */
-const outerEdge = 3;
-const clock = new THREE.Clock()
 const scaleMovement = 0.1;
+
 const tick = () => {
-    const elapsedTime = clock.getElapsedTime()
+    // controls.update()
 
-
-    player.position.x += movePlayerX * scaleMovement;
-    player.position.z += movePlayerZ * scaleMovement;
-
-    if (player.position.x > outerEdge) {
-        player.position.x = outerEdge;
-    } else if (player.position.x < -outerEdge) {
-        player.position.x = -outerEdge;
+    if (movePlayerX > 0) {
+        player.position.x += scaleMovement;
+    } else if (movePlayerX < 0) {
+        player.position.x -= scaleMovement;
     }
 
 
-    // Animate camera
-    // camera.position.y = -scrollY / sizes.height * objectsDistance
+    camera.position.set(player.position.x, player.position.y + 2, 12)
+    // camera.lookAt(player.position)
 
     // Render
     renderer.render(scene, camera)
