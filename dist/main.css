@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #eee;
+    overflow: hidden;
+}
+
+.circle .half {
+    width: 50%;
+    height: 100%;
+    background-color: #f00;
+}
+
+.circle .half:nth-child(2) {
+    width: 50%;
+    height: 100%;
+    background-color: #ff0;
+}
+
+
+/*.circle div:nth-child(3){*/
+/*    background-color:yellow;*/
+/*    border-radius:0 0 0 50px;*/
+/*}*/
+/*.circle div:nth-child(4){*/
+/*    background-color:teal;*/
+/*    border-radius:0 0 50px 0;*/
+/*}*/
+
+/*.circle::before {*/
+/*    background-color: #f00;*/
+/*}*/
+
+/*.circle::after {*/
+/*    background-color: #aa0;*/
+/*    transform: rotate(90deg);*/
+/*}*/
+
+.joystick {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 75px;
+    height: 75px;
+    border-radius: 100px;
+    background-color: #222222;
+    margin: 20px;
+}
+
+
+html {
+    background-color: green;
+}
+
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+
+.section {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    font-family: 'Cabin', sans-serif;
+    color: #ffeded;
+    text-transform: uppercase;
+    font-size: 7vmin;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+section:nth-child(odd) {
+    justify-content: flex-end;
+}
+
+/*# sourceMappingURL=main.css.map*/
