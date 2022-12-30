@@ -13,7 +13,7 @@ export function createObjects() {
     image.addEventListener('load', () => {
         texture.needsUpdate = true
     })
-    image.src = '/textures/bird.png';
+    image.src = '/textures/gradients/bird.png';
 
     const material = new THREE.MeshStandardMaterial({
         color: '#ffffaf'
