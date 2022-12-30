@@ -13168,7 +13168,7 @@
             const t = new Image, e = new pt(t);
             t.addEventListener("load", (() => {
                 e.needsUpdate = !0
-            })), t.src = "textures/gradients/bird.png";
+            })), t.src = "/textures/gradients/bird.png";
             const n = new ao({color: "#ffffaf"}), i = new ao({color: "#ffaaaa"}), r = new ze({map: e}),
                 s = new fn(new gn(20, .5), i);
             s.name = "box1", s.translateX(s.geometry.parameters.width / 2 - 1), s.translateY(-.2);
