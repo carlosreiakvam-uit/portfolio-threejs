@@ -24,9 +24,8 @@ const sizes = {
 }
 
 // Add Objects
-const {plane1, welcomePlane, infoPlane1, player} = createObjects();
+createObjects(scene);
 // const axesHelper = new THREE.AxesHelper(10);
-scene.add(player, welcomePlane, infoPlane1, plane1)
 
 // BUTTON INPUT
 let movePlayerX = 0;
@@ -101,6 +100,7 @@ renderer.setSize(sizes.width, sizes.height)
 // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 const scaleMovement = 0.1;
+const player = scene.getObjectByName('player')
 
 const tick = () => {
     // controls.update()
